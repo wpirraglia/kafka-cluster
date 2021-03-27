@@ -1,0 +1,58 @@
+version: '3.8'
+services:
+  kafka-ui:
+    image: obsidiandynamics/kafdrop:3.27.0
+    container_name: kafka-ui
+    ports:
+      - "9000:9000"
+    restart: always
+    environment:
+      - KAFKA_BROKERCONNECT=kafka-n1:9092,kafka-n2:9092,kafka-n3:9092
+    networks:
+      - kafka_cluster
+    depends_on:
+      - kafka-n1
+      - kafka-n2
+      - kafka-n3
+  kafka-n1:
+    build:
+      context: .
+    image: kafka-cluster:0.1
+    container_name: kafka-n1
+    ports:
+      - "9191:9191"
+    environment:
+      - BROKER_ID=1
+      - AZ=AZ1
+      - EXTERNAL_PORT=9191
+    networks:
+      - kafka_cluster
+  kafka-n2:
+    build:
+      context: .
+    image: kafka-cluster:0.1
+    container_name: kafka-n2
+    ports:
+      - "9192:9192"
+    environment:
+      - BROKER_ID=2
+      - AZ=AZ2
+      - EXTERNAL_PORT=9192
+    networks:
+      - kafka_cluster
+  kafka-n3:
+    build:
+      context: .
+    image: kafka-cluster:0.1
+    container_name: kafka-n3
+    ports:
+      - "9193:9193"
+    environment:
+      - BROKER_ID=3
+      - AZ=AZ3
+      - EXTERNAL_PORT=9193
+    networks:
+      - kafka_cluster
+
+networks:
+  kafka_cluster:
